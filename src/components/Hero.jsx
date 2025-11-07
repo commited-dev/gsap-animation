@@ -1,13 +1,24 @@
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
+import { useRef } from "react";
+import { useMediaQuery } from "react-responsive";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const Hero = () => {
+  const videoRef = useRef();
+
+  const isMobile = useMediaQuery({ maxWidth: 767 });
+
   useGSAP(() => {
     // Wait for fonts to load before splitting text
     document.fonts.ready.then(() => {
       const heroSplit = new SplitText("#hero .title", { type: "chars, words" });
-      const paragraphSplit = new SplitText("#hero .subtitle", { type: "lines" });
+      const paragraphSplit = new SplitText("#hero .subtitle", {
+        type: "lines",
+      });
 
       heroSplit.chars.forEach((char) => char.classList.add("text-gradient"));
 
@@ -39,6 +50,26 @@ const Hero = () => {
       })
       .to("#hero .right-leaf", { yPercent: 200 }, 0)
       .to("#hero .left-leaf", { yPercent: -200 }, 0);
+
+    const startValue = isMobile ? "top 50%" : "center 60%";
+    const endValue = isMobile ? "120% top" : "bottom top";
+
+    // Video scroll animation
+    let videoTimeline = gsap.timeline({
+      scrollTrigger: {
+        trigger: "video",
+        start: startValue,
+        end: endValue,
+        scrub: true,
+        pin: true,
+      },
+    });
+
+    videoRef.current.onloadedmetadata = () => {
+      videoTimeline.to(videoRef.current, {
+        currentTime: videoRef.current.duration,
+      });
+    };
   }, []);
   return (
     <>
@@ -77,6 +108,17 @@ const Hero = () => {
           </div>
         </div>
       </section>
+
+      <div className="video absolute inset-0">
+        <video
+          ref={videoRef}
+          src="/videos/cocktail.mp4"
+          type="video/mp4"
+          muted
+          playsInline
+          preload="auto"
+        ></video>
+      </div>
     </>
   );
 };
