@@ -1,6 +1,6 @@
 import gsap from "gsap";
-import { navLinks } from "../../constants";
 import { useGSAP } from "@gsap/react";
+import { navLinks } from "../../constants";
 
 const Navbar = () => {
   useGSAP(() => {
@@ -11,11 +11,16 @@ const Navbar = () => {
       },
     });
 
-    navTween.from("nav", {
-      backgroundColor: "#0000000050",
-      duration: 1,
-      ease: "power1.inOut",
-    });
+    navTween.fromTo(
+      "nav",
+      { backgroundColor: "transparent", backdropFilter: "blur(0px)" },
+      {
+        backgroundColor: "#00000030",
+        backdropFilter: "blur(10px)",
+        duration: 1,
+        ease: "power1.inOut",
+      }
+    );
   });
   return (
     <nav>
@@ -24,7 +29,7 @@ const Navbar = () => {
           <img
             src="/images/logo.png"
             alt="logo"
-            className="w-8 h-8 object-contain"
+            className="w-6 h-6 object-contain"
           />
           <p>Nova Bar</p>
         </a>
